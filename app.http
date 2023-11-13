@@ -1,2 +1,21 @@
-###
-GET http://localhost:3000/todos/
+//API 1 
+### scenario-1
+GET http://localhost:3000/todos/?status=TO%20DO
+
+### scenario-2
+GET http://localhost:3000/todos/?priority=HIGH
+
+### scenario-3
+GET http://localhost:3000/todos/?priority=HIGH&status=IN%20PROGRESS
+
+### scenario-4
+GET http://localhost:3000/todos/?search_q=Buy
+
+### scenario-5
+GET http://localhost:3000/todos/?category=WORK&status=DONE
+
+### scenario-6
+GET http://localhost:3000/todos/?category=HOME
+
+### scenario-7
+GET http://localhost:3000/todos/?category=LEARNING&priority=HIGH
