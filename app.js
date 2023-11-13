@@ -8,11 +8,8 @@ const dbPath = path.join(__dirname, 'todoApplication.db')
 const {open} = require('sqlite')
 const sqlite3 = require('sqlite3')
 
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
 const format = require('date-fns/format')
 const isMatch = require('date-fns/isMatch')
-var isValid = require('date-fns/isValid')
 
 let db = null
 
