@@ -32,7 +32,11 @@ initializeDBAndServer()
 
 const hasPriorityProperty = requestQuery => {
   let checkValue = requestQuery.priority !== undefined
-  if (checkValue === true) {
+  if (
+    (checkValue === true && requestQuery.priority === 'HIGH') ||
+    requestQuery.priority === 'MEDIUM' ||
+    requestQuery.priority === 'LOW'
+  ) {
     return checkValue
   } else {
     response.status(400)
@@ -41,7 +45,11 @@ const hasPriorityProperty = requestQuery => {
 }
 const hasStatusProperty = requestQuery => {
   let checkValue = requestQuery.status !== undefined
-  if (checkValue === true) {
+  if (
+    (checkValue === true && requestQuery.status === 'TO DO') ||
+    requestQuery.status === 'IN PROGRESS' ||
+    requestQuery.status === 'DONE'
+  ) {
     return checkValue
   } else {
     response.status(400)
@@ -50,7 +58,11 @@ const hasStatusProperty = requestQuery => {
 }
 const hasCategoryProperty = requestQuery => {
   let checkValue = requestQuery.category !== undefined
-  if (checkValue === true) {
+  if (
+    (checkValue === true && requestQuery.category === 'WORK') ||
+    requestQuery.category === 'HOME' ||
+    requestQuery.category === 'LEARNING'
+  ) {
     return checkValue
   } else {
     response.status(400)
@@ -58,14 +70,22 @@ const hasCategoryProperty = requestQuery => {
   }
 }
 const hasSearchProperty = requestQuery => {
-  return requestQuery.priority !== undefined
+  return requestQuery.search_q !== undefined
 }
 const hasPriorityAndStatusProperties = requestQuery => {
   let checkValue1 = requestQuery.priority !== undefined
   let checkValue2 = requestQuery.status !== undefined
   let checkValue3 = checkValue1 && checkValue2
-  if (checkValue1 === true) {
-    if (checkValue2 === true) {
+  if (
+    (checkValue1 === true && requestQuery.priority === 'HIGH') ||
+    requestQuery.priority === 'MEDIUM' ||
+    requestQuery.priority === 'LOW'
+  ) {
+    if (
+      (checkValue2 === true && requestQuery.status === 'TO DO') ||
+      requestQuery.status === 'IN PROGRESS' ||
+      requestQuery.status === 'DONE'
+    ) {
       return checkValue3
     } else {
       response.status(400)
@@ -80,8 +100,16 @@ const hasStatusAndCategoryProperties = requestQuery => {
   let checkValue1 = requestQuery.status !== undefined
   let checkValue2 = requestQuery.category !== undefined
   let checkValue3 = checkValue1 && checkValue2
-  if (checkValue1 === true) {
-    if (checkValue2 === true) {
+  if (
+    (checkValue1 === true && requestQuery.status === 'TO DO') ||
+    requestQuery.status === 'IN PROGRESS' ||
+    requestQuery.status === 'DONE'
+  ) {
+    if (
+      (checkValue2 === true && requestQuery.category === 'WORK') ||
+      requestQuery.category === 'HOME' ||
+      requestQuery.category === 'LEARNING'
+    ) {
       return checkValue3
     } else {
       response.status(400)
@@ -96,8 +124,16 @@ const hasCategoryAndPriority = requestQuery => {
   let checkValue1 = requestQuery.category !== undefined
   let checkValue2 = requestQuery.priority !== undefined
   let checkValue3 = checkValue1 && checkValue2
-  if (checkValue1 === true) {
-    if (checkValue2 === true) {
+  if (
+    (checkValue1 === true && requestQuery.category === 'WORK') ||
+    requestQuery.category === 'HOME' ||
+    requestQuery.category === 'LEARNING'
+  ) {
+    if (
+      (checkValue2 === true && requestQuery.priority === 'HIGH') ||
+      requestQuery.priority === 'MEDIUM' ||
+      requestQuery.priority === 'LOW'
+    ) {
       return checkValue3
     } else {
       response.status(400)
@@ -121,31 +157,15 @@ const toDbObject = dbObject => {
 }
 //api1
 app.get('/todos/', async (request, response) => {
-  const {search_q = '', priority, status} = request.query
+  const {search_q = '', priority, status, category} = request.query
   let getTodosQuery = ''
   let data = null
   switch (true) {
     case hasStatusProperty(request.query):
-      getTodosQuery = `
-          SELECT 
-            *
-          FROM 
-            todo
-          WHERE 
-            todo LIKE '%${search_q}%'
-            AND status='${status}';
-          `
+      getTodosQuery = `SELECT * FROM todo WHERE todo LIKE '%${search_q}%' AND status='${status}';`
       break
     case hasPriorityProperty(request.query):
-      getTodosQuery = `
-          SELECT 
-            *
-          FROM 
-            todo
-          WHERE 
-            todo LIKE '%${search_q}%'
-            AND priority='${priority}';
-        `
+      getTodosQuery = `SELECT * FROM todo WHERE priority='${priority}';`
       break
     case hasPriorityAndStatusProperties(request.query):
       getTodosQuery = `
