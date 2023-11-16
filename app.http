@@ -19,3 +19,18 @@ GET http://localhost:3000/todos/?category=HOME
 
 ### scenario-7
 GET http://localhost:3000/todos/?category=LEARNING&priority=HIGH
+
+//API2
+GET http://localhost:3000/todos/:todoId/
+
+//API3
+GET http://localhost:3000/agenda/
+
+//API4
+POST http://localhost:3000/todos/
+
+//API5
+PUT http://localhost:3000/todos/:todoId/
+
+//API6
+DELETE http://localhost:3000/todos/:todoId/
