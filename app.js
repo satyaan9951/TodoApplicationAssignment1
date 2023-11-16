@@ -52,7 +52,7 @@ const hasStatusAndCategoryProperties = requestQuery => {
     requestQuery.status !== undefined && requestQuery.category !== undefined
   )
 }
-const hasCategoryAndPriority = requestQuery => {
+const hasCategoryAndPriorityProperties = requestQuery => {
   return (
     requestQuery.category !== undefined && requestQuery.priority !== undefined
   )
@@ -114,7 +114,7 @@ app.get('/todos/', async (request, response) => {
         response.send('Invalid Todo Category')
       }
       break
-    case hasCategoryAndPriority(request.query):
+    case hasCategoryAndPriorityProperties(request.query):
       //CATEGORY AND PRIORITY
       if (
         category === 'WORK' ||
@@ -245,25 +245,17 @@ app.post('/todos/', async (request, response) => {
 //api5
 app.put('/todos/:todoId/', async (request, response) => {
   let updateTodoQuery = ''
-  let updateColumn = ''
   const {todoId} = request.params
   const requestBody = request.body
-  const previousTodoQuery = `SELECT * FROM todo WHERE id=${todoId};`
-  const previousTodo = await db.get(previousTodoQuery)
-  const {
-    todo = previousTodo.todo,
-    category = previousTodo.category,
-    priority = previousTodo.priority,
-    status = previousTodo.status,
-    dueDate = previousTodo.dueDate,
-  } = request.body
+  console.log(requestBody)
   switch (true) {
     //update Status
     case requestBody.status !== undefined:
+      const status = requestBody.status
       if (status === 'TO DO' || status === 'IN PROGRESS' || status === 'DONE') {
         updateTodoQuery = `
           UPDATE todo
-          SET todo='${todo}',priority='${priority}',status='${status},category='${category}',due_date='${dueDate}'
+          SET status='${status}'
           WHERE id=${todoId};
           `
         await db.run(updateTodoQuery)
@@ -275,10 +267,11 @@ app.put('/todos/:todoId/', async (request, response) => {
       break
     case requestBody.priority !== undefined:
       //update priority
+      const priority = requestBody.priority
       if (priority === 'HIGH' || priority === 'MEDIUM' || priority === 'LOW') {
         updateTodoQuery = `
           UPDATE todo
-          SET todo='${todo}',priority='${priority}',status='${status},category='${category}',due_date='${dueDate}'
+          SET priority='${priority}'
           WHERE id=${todoId};
           `
         await db.run(updateTodoQuery)
@@ -288,18 +281,20 @@ app.put('/todos/:todoId/', async (request, response) => {
         response.send('Invalid Todo Priority')
       }
       break
-    case request.body.todo !== undefined:
+    case requestBody.todo !== undefined:
       //update todo
+      const todo = requestBody.todo
       updateTodoQuery = `
           UPDATE todo
-          SET todo='${todo}',priority='${priority}',status='${status},category='${category}',due_date='${dueDate}'
+          SET todo='${todo}'
           WHERE id=${todoId};
           `
       await db.run(updateTodoQuery)
       response.send('Todo Updated')
       break
-    case hasCategoryProperty(requestBody.category):
+    case requestBody.category !== undefined:
       //update category
+      const category = requestBody.category
       if (
         category === 'WORK' ||
         category === 'HOME' ||
@@ -307,25 +302,26 @@ app.put('/todos/:todoId/', async (request, response) => {
       ) {
         updateTodoQuery = `
           UPDATE todo
-          SET todo='${todo}',priority='${priority}',status='${status},category='${category}',due_date='${dueDate}'
+          SET category='${category}'
           WHERE id=${todoId};
           `
         await db.run(updateTodoQuery)
         response.send('Category Updated')
       } else {
         response.status(400)
-        response.send('Invalid Todo Priority')
+        response.send('Invalid Todo Category')
       }
       break
     case requestBody.dueDate !== undefined:
       //update duedate
+      const dueDate = requestBody.due_date
       if (isMatch(dueDate, 'yyyy-MM-dd')) {
         const newDueDate = format(new Date(dueDate), 'yyyy-MM-dd')
         const updateTodoQuery = `
           UPDATE
           todo
           SET
-          todo='${todo}',priority='${priority}',status='${status},category='${category}',due_date='${dueDate}'
+          due_date='${newDueDate}'
           WHERE id=${todoId};`
         await db.run(updateTodoQuery)
         response.send('Due Date Updated')
