@@ -329,7 +329,7 @@ app.put('/todos/:todoId/', async (request, response) => {
       break
     case requestBody.dueDate !== undefined:
       //update duedate
-      const dueDate = requestBody.due_date
+      const dueDate = requestBody.dueDate
       if (isMatch(dueDate, 'yyyy-MM-dd')) {
         const newDueDate = format(new Date(dueDate), 'yyyy-MM-dd')
         const updateTodoQuery = `
