@@ -83,6 +83,8 @@ app.get('/todos/', async (request, response) => {
           status === 'DONE'
         ) {
           getTodosQuery = `SELECT * FROM todo WHERE todo LIKE '%${search_q}%' AND status='${status}' AND priority='${priority}';`
+          data = await db.all(getTodosQuery)
+          response.send(data.map(eachItem => toDbObject(eachItem)))
         } else {
           response.status(400)
           response.send('Invalid Todo Status')
@@ -105,6 +107,8 @@ app.get('/todos/', async (request, response) => {
           status === 'DONE'
         ) {
           getTodosQuery = `SELECT * FROM todo WHERE category='${category}' AND status='${status}';`
+          data = await db.all(getTodosQuery)
+          response.send(data.map(eachItem => toDbObject(eachItem)))
         } else {
           response.status(400)
           response.send('Invalid Todo Status')
@@ -127,6 +131,8 @@ app.get('/todos/', async (request, response) => {
           priority === 'LOW'
         ) {
           getTodosQuery = `SELECT * FROM todo WHERE category='${category}' AND priority='${priority}';`
+          data = await db.all(getTodosQuery)
+          response.send(data.map(eachItem => toDbObject(eachItem)))
         } else {
           response.status(400)
           response.send('Invalid Todo Priority')
@@ -140,6 +146,8 @@ app.get('/todos/', async (request, response) => {
       //PRIORITY
       if (priority === 'HIGH' || priority === 'MEDIUM' || priority === 'LOW') {
         getTodosQuery = `SELECT * FROM todo WHERE priority='${priority}';`
+        data = await db.all(getTodosQuery)
+        response.send(data.map(eachItem => toDbObject(eachItem)))
       } else {
         response.status(400)
         response.send('Invalid Todo Priority')
@@ -149,6 +157,8 @@ app.get('/todos/', async (request, response) => {
       //STATUS
       if (status === 'TO DO' || status === 'IN PROGRESS' || status === 'DONE') {
         getTodosQuery = `SELECT * FROM todo WHERE todo LIKE '%${search_q}%' AND status='${status}';`
+        data = await db.all(getTodosQuery)
+        response.send(data.map(eachItem => toDbObject(eachItem)))
       } else {
         response.status(400)
         response.send('Invalid Todo Status')
@@ -158,6 +168,8 @@ app.get('/todos/', async (request, response) => {
     case hasSearchProperty(request.query):
       //SEARCH_Q
       getTodosQuery = `SELECT * FROM todo WHERE todo LIKE '%${search_q}%';`
+      data = await db.all(getTodosQuery)
+      response.send(data.map(eachItem => toDbObject(eachItem)))
       break
 
     case hasCategoryProperty(request.query):
@@ -168,6 +180,8 @@ app.get('/todos/', async (request, response) => {
         category === 'LEARNING'
       ) {
         getTodosQuery = `SELECT * FROM todo WHERE category='${category}';`
+        data = await db.all(getTodosQuery)
+        response.send(data.map(eachItem => toDbObject(eachItem)))
       } else {
         response.status(400)
         response.send('Invalid Todo Category')
@@ -176,10 +190,11 @@ app.get('/todos/', async (request, response) => {
 
     default:
       getTodosQuery = `SELECT * FROM todo WHERE todo;`
+      data = await db.all(getTodosQuery)
+      response.send(data.map(eachItem => toDbObject(eachItem)))
   }
-  data = await db.all(getTodosQuery)
-  response.send(data.map(eachItem => toDbObject(eachItem)))
 })
+
 //api2
 app.get('/todos/:todoId/', async (request, response) => {
   const {todoId} = request.params
